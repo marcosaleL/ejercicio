@@ -15,10 +15,6 @@ import lombok.NoArgsConstructor;
 public class ResponseSignUpDTO {
 
     private Long userId;
-    private String name;
-    private String email;
-    private String password;
-    private List<PhoneEntity> phones;
     private String created;
     private String lastLogin;
     private String token;
@@ -26,10 +22,6 @@ public class ResponseSignUpDTO {
 
     public ResponseSignUpDTO(UserEntity user) {
         this.userId = user.getId();
-        this.name = user.getName();
-        this.email = user.getEmail();
-        this.password = user.getPassword();
-        this.phones = user.getPhones();
         this.created = user.getCreated();
         this.lastLogin = user.getLastLogin();
         this.isActive = true;

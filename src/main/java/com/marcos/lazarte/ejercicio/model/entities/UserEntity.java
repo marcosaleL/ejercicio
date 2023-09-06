@@ -1,5 +1,9 @@
 package com.marcos.lazarte.ejercicio.model.entities;
 
+import com.marcos.lazarte.ejercicio.model.DTO.RequestSignUpDTO;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -25,6 +29,7 @@ import lombok.NoArgsConstructor;
 @Builder
 public class UserEntity {
 
+    private static final String DATA_TIME_FORMAT = "LLL dd, yyyy hh:mm:ss a";
     @Id
     @Column(name = "id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -48,5 +53,14 @@ public class UserEntity {
     @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "users_id")
     private List<PhoneEntity> phones;
+
+    public UserEntity(RequestSignUpDTO signUp) {
+        this.name = signUp.getName();
+        this.email = signUp.getEmail();
+        this.password = signUp.getPassword();
+        this.created = LocalDateTime.now(ZoneId.of("UTC")).format(DateTimeFormatter.ofPattern(DATA_TIME_FORMAT));
+        this.phones = signUp.getPhones();
+        this.lastLogin = null;
+    }
 
 }

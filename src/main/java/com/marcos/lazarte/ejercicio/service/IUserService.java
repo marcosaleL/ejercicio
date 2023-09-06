@@ -7,7 +7,7 @@ import com.marcos.lazarte.ejercicio.model.DTO.ResponseSignUpDTO;
 
 public interface IUserService {
 
-    public ResponseLoginDTO login(RequestLoginDTO login);
+    public ResponseLoginDTO login(RequestLoginDTO requestLoginDTO);
 
-    public ResponseSignUpDTO signUp(RequestSignUpDTO signUp);
+    public ResponseSignUpDTO signUp(RequestSignUpDTO requestSignUpDTO);
 }
