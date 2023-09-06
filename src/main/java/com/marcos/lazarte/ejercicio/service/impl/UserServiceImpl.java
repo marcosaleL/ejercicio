@@ -34,19 +34,18 @@ public class UserServiceImpl implements IUserService {
         if (!userRepository.existsByEmail(requestLoginDTO.getEmail()))
             throw new InternalServerErrorException("Email does not exist");
         UserEntity presentUser = userRepository.findByEmail(requestLoginDTO.getEmail());
-        if (passwordSecurity.verifyPassword(requestLoginDTO.getPassword(), presentUser.getPassword())) {
-            if (jwtProvider.validate(requestLoginDTO.getToken())) {
-                presentUser.setLastLogin(
-                    LocalDateTime.now(ZoneId.of("UTC")).format(DateTimeFormatter.ofPattern(DATA_TIME_FORMAT)));
-                UserEntity updatedUser = userRepository.save(presentUser);
-                ResponseLoginDTO responseLoginDTO = new ResponseLoginDTO(updatedUser);
-                responseLoginDTO.setPassword(requestLoginDTO.getPassword());
-                responseLoginDTO.setToken(jwtProvider.createToken(responseLoginDTO.getEmail()));
-                return responseLoginDTO;
-            } else
-                throw new BadRequestException("Token is incorrect");
-        } else
+        if (!passwordSecurity.verifyPassword(requestLoginDTO.getPassword(), presentUser.getPassword()))
             throw new BadRequestException("Password is incorrect");
+        if (jwtProvider.validate(requestLoginDTO.getToken())) {
+            presentUser.setLastLogin(
+                LocalDateTime.now(ZoneId.of("UTC")).format(DateTimeFormatter.ofPattern(DATA_TIME_FORMAT)));
+            UserEntity updatedUser = userRepository.save(presentUser);
+            ResponseLoginDTO responseLoginDTO = new ResponseLoginDTO(updatedUser);
+            responseLoginDTO.setPassword(requestLoginDTO.getPassword());
+            responseLoginDTO.setToken(jwtProvider.createToken(responseLoginDTO.getEmail()));
+            return responseLoginDTO;
+        } else
+            throw new BadRequestException("Token is incorrect");
     }
 
     @Override
@@ -55,7 +54,8 @@ public class UserServiceImpl implements IUserService {
             throw new InternalServerErrorException("Email already exist");
         if (!passwordSecurity.passwordValidation(requestSignUpDTO.getPassword()))
             throw new BadRequestException(
-                "The password is invalid. No special characters were submitted, it must contain only one uppercase letter, two numbers, and must be between 8 and 12 characters");
+                "The password is invalid. No special characters were submitted, it must contain only one uppercase " +
+                    "letter, two numbers, and must be between 8 and 12 characters");
         UserEntity userEntity = new UserEntity(requestSignUpDTO);
         userEntity.setPassword(passwordSecurity.encryptPassword(userEntity.getPassword()));
         UserEntity userInserted = userRepository.save(userEntity);
