@@ -17,3 +17,6 @@ spring:
     hibernate:
       ddl-auto: create-drop
     defer-datasource-initialization: true
+    show-sql: true
+jwt:
+  secret: 4ec76c6f-2a6a-4632-824e-241eeab81aa2
